@@ -1,17 +1,18 @@
 #include "tcpsocket.h"
 
-tcpsocket::tcpsocket(QObject *parent) : QObject(parent)
+#include <QDebug>
+
+Tcpsocket::Tcpsocket(QObject *parent) : QObject(parent)
 {
     socket = new QTcpSocket(this);
-    _counter = 0;
 
-    connect(socket, SIGNAL(connected()),this, SLOT(connected()));
-    connect(socket, SIGNAL(disconnected()),this, SLOT(disconnected()));
-    connect(socket, SIGNAL(bytesWritten(qint64)),this, SLOT(bytesWritten(qint64)));
-    connect(socket, SIGNAL(readyRead()),this, SLOT(readyRead()));
+    connect(socket, SIGNAL(connected()),          this, SLOT(connected()));
+    connect(socket, SIGNAL(disconnected()),       this, SLOT(disconnected()));
+    connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
+    connect(socket, SIGNAL(readyRead()),          this, SLOT(readyRead()));
 }
 
-void tcpsocket::doConnect()
+void Tcpsocket::doConnect()
 {
     qDebug() << "connecting...";
 
@@ -25,30 +26,30 @@ void tcpsocket::doConnect()
     }
 }
 
-void tcpsocket::doReply(QByteArray data)
+void Tcpsocket::doReply(QByteArray data)
 {
     qDebug() << "sending...";
     QString str = "Got ";
     socket->write(str.toUtf8() + data);
 }
 
-void tcpsocket::connected()
+void Tcpsocket::connected()
 {
     qDebug() << "connected...";
     socket->write("Hello from Client!");
 }
 
-void tcpsocket::disconnected()
+void Tcpsocket::disconnected()
 {
     qDebug() << "disconnected...";
 }
 
-void tcpsocket::bytesWritten(qint64 bytes)
+void Tcpsocket::bytesWritten(qint64 bytes)
 {
     qDebug() << bytes << " bytes written...";
 }
 
-void tcpsocket::readyRead()
+void Tcpsocket::readyRead()
 {
     qDebug() << "reading...";
 
@@ -56,4 +57,6 @@ void tcpsocket::readyRead()
     QByteArray data = socket->readAll();
     qDebug() << data;
     doReply(data);
+
+    emit parseData(data);
 }

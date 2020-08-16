@@ -4,18 +4,18 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QAbstractSocket>
-#include <QDebug>
 
-class tcpsocket : public QObject
+class Tcpsocket : public QObject
 {
     Q_OBJECT
 public:
-    explicit tcpsocket(QObject *parent = nullptr);
+    explicit Tcpsocket(QObject *parent = nullptr);
 
     void doConnect();
     void doReply(QByteArray data);
 
 signals:
+    void parseData(QByteArray data);
 
 public slots:
     void connected();
@@ -25,8 +25,6 @@ public slots:
 
 private:
     QTcpSocket *socket;
-    int _counter;
-
 };
 
 #endif // TCPSOCKET_H

@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include "tcpsocket.h"
+#include "vrmclient.h"
 
 // test git hub on raspberry pi
 
@@ -7,9 +7,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    tcpsocket *mysocket = new tcpsocket();
-    mysocket->doConnect();
-
+    Vrmclient *vrmClient = new Vrmclient();
 
     return a.exec();
 }
