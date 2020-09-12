@@ -38,55 +38,89 @@ Vrmclient::Vrmclient()
     initGPIO();
 }
 
+// a command format 10 bytes:
+// example: S1:0101E
+// [0]   S   - start
+// [1]   1   - id of a client
+// [2]   :   - spacer between client id and a command id
+// [3-6] 101 - a command id
+// [7]   E   - end of the command
 void Vrmclient::parseData(QByteArray data)
 {
-    int commandId = 0;
+    uint commandId = 0;
+    uint clientId = 0;
     bool isOk = false;
 
-    commandId = data.toInt(&isOk);
+    QList<QByteArray> commands = data.split('E');
 
-    if (isOk)
+    foreach (QByteArray command, commands)
     {
-        if ((commandId >= eChangeSpeed) && (commandId < eChangeSpeed + eSpeedLast))
-        {
-            _speed = commandId % eChangeSpeed;
-            commandId = eChangeSpeed;
-        }
+        if (command.length() == 0) continue;
 
-        switch (commandId)
+        qDebug() << "command is " + command;
+
+        if (command.length() == 7 && command.at(0) == 'S' && command.at(2) == ':')
         {
-        case eMoveForward:
-            moveForward();
-            break;
-        case eMoveBackward:
-            moveBackward();
-            break;
-        case eMoveLeft:
-            moveLeft();
-            break;
-        case eMoveRight:
-            moveRight();
-            break;
-        case eTurnLeft:
-            turnLeft();
-            break;
-        case eTurnRight:
-            turnRight();
-            break;
-        case eStop:
-            stop();
-            break;
-        case eChangeSpeed:
-            changeSpeed(_speed);
-            break;
-        default:
-            qDebug() << "Unknown command";
-            break;
+            clientId = command.mid(1, 1).toUInt(&isOk);
+            if (!isOk)
+            {
+                qDebug() << "Wrong format for Client Id";
+                continue;
+            }
+            qDebug() << "Client Id = " + QString::number(clientId);
+
+            commandId = command.mid(3, 4).toUInt(&isOk);    // take 4 bytes from 3rd byte
+
+            if (isOk)
+            {
+                qDebug() << "Command Id = " + QString::number(commandId);
+
+                if ((commandId >= eChangeSpeed) && (commandId < eChangeSpeed + eSpeedLast))
+                {
+                    _speed = commandId % eChangeSpeed;
+                    commandId = eChangeSpeed;
+                }
+
+                switch (commandId)
+                {
+                case eMoveForward:
+                    moveForward();
+                    break;
+                case eMoveBackward:
+                    moveBackward();
+                    break;
+                case eMoveLeft:
+                    moveLeft();
+                    break;
+                case eMoveRight:
+                    moveRight();
+                    break;
+                case eTurnLeft:
+                    turnLeft();
+                    break;
+                case eTurnRight:
+                    turnRight();
+                    break;
+                case eStop:
+                    stop();
+                    break;
+                case eChangeSpeed:
+                    changeSpeed(_speed);
+                    break;
+                default:
+                    qDebug() << "Unknown command";
+                    break;
+                }
+            }
+            else
+            {
+                qDebug() << "Wrong command ID";
+            }
         }
-    }
-    else
-    {
-        qDebug() << "Wrong command format";
+        else
+        {
+            qDebug() << "Wrong command format";
+        }
     }
 }
 
