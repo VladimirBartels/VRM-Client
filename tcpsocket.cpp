@@ -4,12 +4,21 @@
 
 Tcpsocket::Tcpsocket(QObject *parent) : QObject(parent)
 {
-    socket = new QTcpSocket(this);
+    _socket = new QTcpSocket(this);
 
-    connect(socket, SIGNAL(connected()),          this, SLOT(connected()));
-    connect(socket, SIGNAL(disconnected()),       this, SLOT(disconnected()));
-    connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
-    connect(socket, SIGNAL(readyRead()),          this, SLOT(readyRead()));
+    connect(_socket, SIGNAL(connected()),          this, SLOT(connected()));
+    connect(_socket, SIGNAL(disconnected()),       this, SLOT(disconnected()));
+    connect(_socket, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
+    connect(_socket, SIGNAL(readyRead()),          this, SLOT(readyRead()));
+}
+
+Tcpsocket::~Tcpsocket()
+{
+    if (_socket)
+    {
+        delete _socket;
+        _socket = nullptr;
+    }
 }
 
 void Tcpsocket::doConnect()
@@ -17,12 +26,12 @@ void Tcpsocket::doConnect()
     qDebug() << "connecting...";
 
     // this is not blocking call
-    socket->connectToHost("192.168.0.100", 80);
+    _socket->connectToHost("192.168.0.100", 80);
 
     // we need to wait...
-    if(!socket->waitForConnected(10000))
+    if(!_socket->waitForConnected(10000))
     {
-        qDebug() << "Error: " << socket->errorString();
+        qDebug() << "Error: " << _socket->errorString();
     }
 }
 
@@ -30,13 +39,13 @@ void Tcpsocket::doReply(QByteArray data)
 {
     qDebug() << "sending...";
     QString str = "Got ";
-    socket->write(str.toUtf8() + data);
+    _socket->write(str.toUtf8() + data);
 }
 
 void Tcpsocket::connected()
 {
     qDebug() << "connected...";
-    socket->write("Hello from Client!");
+    _socket->write("Hello from Client!");
 }
 
 void Tcpsocket::disconnected()
@@ -54,7 +63,7 @@ void Tcpsocket::readyRead()
     qDebug() << "reading...";
 
     // read the data from the socket
-    QByteArray data = socket->readAll();
+    QByteArray data = _socket->readAll();
     qDebug() << data;
     doReply(data);
 

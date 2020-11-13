@@ -7,12 +7,9 @@
 
 enum eCarSpeed
 {
-    eNoSpeed    = 0,
-    eSlow       = 1,
-    eNormal     = 2,
-    eFast       = 3,
-    eTurbo      = 4,
-    eUltraSound = 5,
+    eSlow       = 0,
+    eNormal     = 1,
+    eFast       = 2,
     eSpeedLast
 };
 
@@ -33,6 +30,7 @@ class Vrmclient : public QObject
     Q_OBJECT
 public:
     Vrmclient();
+    ~Vrmclient();
 
 public slots:
     void parseData(QByteArray data);    // get data from Server via TCP/IP and parse them

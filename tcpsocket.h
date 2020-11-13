@@ -10,6 +10,7 @@ class Tcpsocket : public QObject
     Q_OBJECT
 public:
     explicit Tcpsocket(QObject *parent = nullptr);
+    ~Tcpsocket();
 
     void doConnect();
     void doReply(QByteArray data);
@@ -24,7 +25,7 @@ public slots:
     void readyRead();
 
 private:
-    QTcpSocket *socket;
+    QTcpSocket *_socket;
 };
 
 #endif // TCPSOCKET_H

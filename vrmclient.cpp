@@ -31,11 +31,20 @@ Vrmclient::Vrmclient()
     _mySocket = new Tcpsocket();
     _mySocket->doConnect();
 
-    _speed = eNoSpeed;
+    _speed = eSlow;
 
     connect(_mySocket, SIGNAL(parseData(QByteArray)), this, SLOT(parseData(QByteArray)), Qt::UniqueConnection);
 
     initGPIO();
+}
+
+Vrmclient::~Vrmclient()
+{
+    if (_mySocket)
+    {
+        delete _mySocket;
+        _mySocket = nullptr;
+    }
 }
 
 // a command format 10 bytes:
@@ -279,22 +288,13 @@ void Vrmclient::changeSpeed(uint speed)
     {
         switch (speed)
         {
-        case eNoSpeed:
-            pwmValue = 0;
-            break;
         case eSlow:
-            pwmValue = 15;
-            break;
-        case eNormal:
             pwmValue = 25;
             break;
-        case eFast:
+        case eNormal:
             pwmValue = 50;
             break;
-        case eTurbo:
-            pwmValue = 75;
-            break;
-        case eUltraSound:
+        case eFast:
             pwmValue = 100;
             break;
         default:
