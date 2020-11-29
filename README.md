@@ -11,6 +11,10 @@ Each Client has its own static IP address
 
 Usage: firstly VRM-Server should be started that awaits connections from clients
 
+Video:
+https://youtu.be/fpxNOpHT_lg
+
+Photo:
 ![](images/IMG-8845.jpg)
 ![](images/IMG-8846.jpg)
 ![](images/IMG-8847.jpg)
