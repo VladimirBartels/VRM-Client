@@ -19,7 +19,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     tcpsocket.cpp \
-    vrmclient.cpp
+    vrmclient.cpp \
+    generics.cpp
 
 # So wiringPi include files can be found during compile
 INCLUDEPATH    += /usr/local/include
@@ -34,4 +35,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     tcpsocket.h \
-    vrmclient.h
+    vrmclient.h \
+    generics.h
